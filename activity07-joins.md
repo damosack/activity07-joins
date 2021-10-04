@@ -7,6 +7,10 @@ David Mosack
 Load the entirety of the `{tidyverse}`. Be sure to avoid printing out
 any unnecessary information and give the code chunk a meaningful name.
 
+``` r
+library(tidyverse)
+```
+
 In this activity we will explore joining information that is contained
 in multiple data files. We will also explore ways of visualizing spatial
 data.
@@ -33,6 +37,17 @@ name (e.g., `dennys`,`laquinta`, and `states`), be sure to avoid
 printing any unnecessary information. Give your code chunk a meaningful
 name.
 
+``` r
+dennys <- 
+  as_tibble(read_csv(here::here("data", "dennys.csv")))
+
+laquinta <- 
+  as_tibble(read_csv(here::here("data", "laquinta.csv")))
+
+states <-
+  as_tibble(read_csv(here::here("data", "states.csv")))
+```
+
 ### Provide more information
 
 `class`, `str`, `nrow`, `ncol`, and `names` are extremely helpful
@@ -55,49 +70,88 @@ column in the partially started data dictionary tables below.
 str(dennys)
 ```
 
-    ## Error in str(dennys): object 'dennys' not found
+    ## tibble [1,643 × 6] (S3: tbl_df/tbl/data.frame)
+    ##  $ address  : chr [1:1643] "2900 Denali" "3850 Debarr Road" "1929 Airport Way" "230 Connector Dr" ...
+    ##  $ city     : chr [1:1643] "Anchorage" "Anchorage" "Fairbanks" "Auburn" ...
+    ##  $ state    : chr [1:1643] "AK" "AK" "AK" "AL" ...
+    ##  $ zip      : chr [1:1643] "99503" "99508" "99701" "36849" ...
+    ##  $ longitude: num [1:1643] -149.9 -149.8 -147.8 -85.5 -86.8 ...
+    ##  $ latitude : num [1:1643] 61.2 61.2 64.8 32.6 33.6 ...
+    ##  - attr(*, "spec")=
+    ##   .. cols(
+    ##   ..   address = col_character(),
+    ##   ..   city = col_character(),
+    ##   ..   state = col_character(),
+    ##   ..   zip = col_character(),
+    ##   ..   longitude = col_double(),
+    ##   ..   latitude = col_double()
+    ##   .. )
 
 ``` r
 str(laquinta)
 ```
 
-    ## Error in str(laquinta): object 'laquinta' not found
+    ## tibble [909 × 6] (S3: tbl_df/tbl/data.frame)
+    ##  $ address  : chr [1:909] "793 W. Bel Air Avenue" "3018 CatClaw Dr" "3501 West Lake Rd" "184 North Point Way" ...
+    ##  $ city     : chr [1:909] "\nAberdeen" "\nAbilene" "\nAbilene" "\nAcworth" ...
+    ##  $ state    : chr [1:909] "MD" "TX" "TX" "GA" ...
+    ##  $ zip      : chr [1:909] "21001" "79606" "79601" "30102" ...
+    ##  $ longitude: num [1:909] -76.2 -99.8 -99.7 -84.7 -96.6 ...
+    ##  $ latitude : num [1:909] 39.5 32.4 32.5 34.1 34.8 ...
+    ##  - attr(*, "spec")=
+    ##   .. cols(
+    ##   ..   address = col_character(),
+    ##   ..   city = col_character(),
+    ##   ..   state = col_character(),
+    ##   ..   zip = col_character(),
+    ##   ..   longitude = col_double(),
+    ##   ..   latitude = col_double()
+    ##   .. )
 
 ``` r
 str(states)
 ```
 
-    ## Error in str(states): object 'states' not found
+    ## tibble [51 × 3] (S3: tbl_df/tbl/data.frame)
+    ##  $ name        : chr [1:51] "Alabama" "Alaska" "Arizona" "Arkansas" ...
+    ##  $ abbreviation: chr [1:51] "AL" "AK" "AZ" "AR" ...
+    ##  $ area        : num [1:51] 52420 665384 113990 53179 163695 ...
+    ##  - attr(*, "spec")=
+    ##   .. cols(
+    ##   ..   name = col_character(),
+    ##   ..   abbreviation = col_character(),
+    ##   ..   area = col_double()
+    ##   .. )
 
 #### Denny’s data
 
 | Variable    | Type | Brief description                 |
 |-------------|------|-----------------------------------|
-| `address`   |      | street address of dennys location |
-| `city`      |      | city of dennys location           |
-| `state`     |      | state of dennys location          |
-| `zip`       |      | zip code of dennys location       |
-| `longitude` |      | east-west position on Earth       |
-| `latitude`  |      | north-south position on Earth     |
+| `address`   | chr  | street address of dennys location |
+| `city`      | chr  | city of dennys location           |
+| `state`     | chr  | state of dennys location          |
+| `zip`       | chr  | zip code of dennys location       |
+| `longitude` | num  | east-west position on Earth       |
+| `latitude`  | num  | north-south position on Earth     |
 
 #### La Quinta’s data
 
 | Variable    | Type | Brief description                   |
 |-------------|------|-------------------------------------|
-| `address`   |      | street address of laquinta location |
-| `city`      |      | city of laquinta location           |
-| `state`     |      | state of laquinta location          |
-| `zip`       |      | zip code of laquinta location       |
-| `longitude` |      | east-west position on Earth         |
-| `latitude`  |      | north-south position on Earth       |
+| `address`   | chr  | street address of laquinta location |
+| `city`      | chr  | city of laquinta location           |
+| `state`     | chr  | state of laquinta location          |
+| `zip`       | chr  | zip code of laquinta location       |
+| `longitude` | num  | east-west position on Earth         |
+| `latitude`  | num  | north-south position on Earth       |
 
 #### States data
 
 | Variable       | Type | Brief description             |
 |----------------|------|-------------------------------|
-| `name`         |      | state name                    |
-| `abbreviation` |      | state abbreviation            |
-| `area`         |      | area in thousand square miles |
+| `name`         | chr  | state name                    |
+| `abbreviation` | chr  | state abbreviation            |
+| `area`         | num  | area in thousand square miles |
 
 ![](README-img/noun_pause.png) **Planned Pause Point**: If you have any
 questions, contact your instructor. Otherwise feel free to continue on.
@@ -111,14 +165,19 @@ the United States Look at the websites that the data come from (linked
 above). Are there any La Quinta’s locations outside of the US? What
 about Denny’s?
 
-**Response**:
+**Response**: It looks like all Dennys locations are within the United
+States, but there are La Quinta locations in other countries, including
+canada, mexico, New Zealand, etc.
 
 If we wanted to do this using the datasets, would we need to ? Don’t
 worry about implementing this yet, you only need to brainstorm some
 ideas. Include at least one idea as your answer, but you are welcome to
 write down a few options too.
 
-**Response**:
+**Response**: I think that it would be easy to filter out foreign
+locations in the laquinta tibble with a pipe operator and a filter
+function where country == US, but there isn’t a variable for country so
+I suppose it’d have to be joined to another dataset first.
 
 ### Preparing to Join
 
@@ -130,11 +189,30 @@ state is *not in* `states$abbreviation`. Do not assign this to anything;
 we only want to see if we need to be aware of non-US cases. If there are
 any non-US locations, specify where these are.
 
-**Response**:
+``` r
+dennys %>%
+  filter(!state %in% states$abbreviation)
+```
+
+    ## # A tibble: 0 x 6
+    ## # … with 6 variables: address <chr>, city <chr>, state <chr>, zip <chr>,
+    ## #   longitude <dbl>, latitude <dbl>
+
+**Response**: There are no locations outside the US in the Denny’s
+dataset.
 
 Now do this again, but using `anti_join`. To do so, take the Denny’s
 locations and anti-join this with the states dataset. Remember to
 specify your `by` columns.
+
+``` r
+dennys %>% 
+  anti_join(states, by = c("state" = "abbreviation"))
+```
+
+    ## # A tibble: 0 x 6
+    ## # … with 6 variables: address <chr>, city <chr>, state <chr>, zip <chr>,
+    ## #   longitude <dbl>, latitude <dbl>
 
 #### Brief Aside
 
@@ -153,7 +231,20 @@ dennys %>%
     )
 ```
 
-    ## Error in dennys %>% mutate(bradford_lived = case_when(state %in% c("MI", : could not find function "%>%"
+    ## # A tibble: 1,643 x 7
+    ##    address             city        state zip   longitude latitude bradford_lived
+    ##    <chr>               <chr>       <chr> <chr>     <dbl>    <dbl> <chr>         
+    ##  1 2900 Denali         Anchorage   AK    99503    -150.      61.2 No            
+    ##  2 3850 Debarr Road    Anchorage   AK    99508    -150.      61.2 No            
+    ##  3 1929 Airport Way    Fairbanks   AK    99701    -148.      64.8 No            
+    ##  4 230 Connector Dr    Auburn      AL    36849     -85.5     32.6 No            
+    ##  5 224 Daniel Payne D… Birmingham  AL    35207     -86.8     33.6 No            
+    ##  6 900 16th St S, Com… Birmingham  AL    35294     -86.8     33.5 No            
+    ##  7 5931 Alabama Highw… Cullman     AL    35056     -86.9     34.2 No            
+    ##  8 2190 Ross Clark Ci… Dothan      AL    36301     -85.4     31.2 No            
+    ##  9 900 Tyson Rd        Hope Hull … AL    36043     -86.4     32.2 No            
+    ## 10 4874 University Dr… Huntsville  AL    35816     -86.7     34.7 No            
+    ## # … with 1,633 more rows
 
 `case_when` looks to see if any of the `dennys$state`s are in the vector
 of state abbreviations that I have lived (i.e.,
@@ -180,7 +271,20 @@ dennys %>%
   filter(country != "Other")
 ```
 
-    ## Error in dennys %>% mutate(country = case_when(state %in% states$abbreviation ~ : could not find function "%>%"
+    ## # A tibble: 1,643 x 7
+    ##    address                city         state zip   longitude latitude country   
+    ##    <chr>                  <chr>        <chr> <chr>     <dbl>    <dbl> <chr>     
+    ##  1 2900 Denali            Anchorage    AK    99503    -150.      61.2 United St…
+    ##  2 3850 Debarr Road       Anchorage    AK    99508    -150.      61.2 United St…
+    ##  3 1929 Airport Way       Fairbanks    AK    99701    -148.      64.8 United St…
+    ##  4 230 Connector Dr       Auburn       AL    36849     -85.5     32.6 United St…
+    ##  5 224 Daniel Payne Driv… Birmingham   AL    35207     -86.8     33.6 United St…
+    ##  6 900 16th St S, Common… Birmingham   AL    35294     -86.8     33.5 United St…
+    ##  7 5931 Alabama Highway,… Cullman      AL    35056     -86.9     34.2 United St…
+    ##  8 2190 Ross Clark Circle Dothan       AL    36301     -85.4     31.2 United St…
+    ##  9 900 Tyson Rd           Hope Hull (… AL    36043     -86.4     32.2 United St…
+    ## 10 4874 University Drive  Huntsville   AL    35816     -86.7     34.7 United St…
+    ## # … with 1,633 more rows
 
 ![](README-img/noun_pause.png) **Planned Pause Point**: If you have any
 questions, contact your instructor. Otherwise feel free to continue on.
@@ -188,6 +292,18 @@ questions, contact your instructor. Otherwise feel free to continue on.
 #### La Quinta
 
 Determine if La Quinta has any locations that are outside of the US.
+
+``` r
+laquinta %>%
+  anti_join(states, by = c("state" = "abbreviation")) %>%
+  count(state, sort=TRUE) %>%
+  summarize(sum(n))
+```
+
+    ## # A tibble: 1 x 1
+    ##   `sum(n)`
+    ##      <int>
+    ## 1       14
 
 #### Isolating US locations
 
@@ -197,11 +313,37 @@ we do not need to worry about updating this object, but you do need to
 do some work on the `laquinta` data. Create a new object called
 `laquinta_us` that only contains the locations inside the US.
 
+``` r
+laquinta_us <- laquinta %>%
+  semi_join(states, by = c("state" = "abbreviation"))
+```
+
 ### Fewest locations
 
 Let’s test some of our data summary skills.
 
 Which US state(s) has/ve the fewest Denny’s location?
+
+``` r
+dennys %>%
+  group_by(state)
+```
+
+    ## # A tibble: 1,643 x 6
+    ## # Groups:   state [51]
+    ##    address                       city             state zip   longitude latitude
+    ##    <chr>                         <chr>            <chr> <chr>     <dbl>    <dbl>
+    ##  1 2900 Denali                   Anchorage        AK    99503    -150.      61.2
+    ##  2 3850 Debarr Road              Anchorage        AK    99508    -150.      61.2
+    ##  3 1929 Airport Way              Fairbanks        AK    99701    -148.      64.8
+    ##  4 230 Connector Dr              Auburn           AL    36849     -85.5     32.6
+    ##  5 224 Daniel Payne Drive N      Birmingham       AL    35207     -86.8     33.6
+    ##  6 900 16th St S, Commons on Gr… Birmingham       AL    35294     -86.8     33.5
+    ##  7 5931 Alabama Highway, #157    Cullman          AL    35056     -86.9     34.2
+    ##  8 2190 Ross Clark Circle        Dothan           AL    36301     -85.4     31.2
+    ##  9 900 Tyson Rd                  Hope Hull (Tyso… AL    36043     -86.4     32.2
+    ## 10 4874 University Drive         Huntsville       AL    35816     -86.7     34.7
+    ## # … with 1,633 more rows
 
 **Response**:
 
@@ -278,16 +420,10 @@ company each location belongs to.
 ``` r
 pre_join_dennys <- dennys %>% 
   mutate(establishment = "Denny's")
-```
 
-    ## Error in dennys %>% mutate(establishment = "Denny's"): could not find function "%>%"
-
-``` r
 pre_join_laquinta_us <- laquinta_us %>% 
   mutate(establishment = "La Quinta")
 ```
-
-    ## Error in laquinta_us %>% mutate(establishment = "La Quinta"): could not find function "%>%"
 
 Now, stack these two `pre_join_*` tibbles on top of each other. After
 you have verified the stacking worked, assign the resulting object to

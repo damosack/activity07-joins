@@ -13,7 +13,11 @@ knitr::opts_chunk$set(error = TRUE)
 Load the entirety of the `{tidyverse}`.
 Be sure to avoid printing out any unnecessary information and give the code chunk a meaningful name.
 
+```{r loading tidyverse, message=FALSE}
 
+library(tidyverse)
+
+```
 
 In this activity we will explore joining information that is contained in multiple data files.
 We will also explore ways of visualizing spatial data.
@@ -31,6 +35,18 @@ Read each of the three files using `here::here` in combination with the appropri
 Assign each file to a meaningful object name (e.g., `dennys`,`laquinta`, and `states`), be sure to avoid printing any unnecessary information.
 Give your code chunk a meaningful name.
 
+```{r reading data files, message=FALSE}
+
+dennys <- 
+  as_tibble(read_csv(here::here("data", "dennys.csv")))
+
+laquinta <- 
+  as_tibble(read_csv(here::here("data", "laquinta.csv")))
+
+states <-
+  as_tibble(read_csv(here::here("data", "states.csv")))
+
+```
 
 
 
@@ -58,31 +74,31 @@ str(states)
 
 | Variable    | Type | Brief description                 |
 |-------------|------|-----------------------------------|
-| `address`   |      | street address of dennys location |
-| `city`      |      | city of dennys location           |
-| `state`     |      | state of dennys location          |
-| `zip`       |      | zip code of dennys location       |
-| `longitude` |      | east-west position on Earth       |
-| `latitude`  |      | north-south position on Earth     |
+| `address`   |chr| street address of dennys location |
+| `city`      |chr| city of dennys location           |
+| `state`     |chr| state of dennys location          |
+| `zip`       |chr| zip code of dennys location       |
+| `longitude` |num| east-west position on Earth       |
+| `latitude`  |num| north-south position on Earth     |
 
 #### La Quinta's data
 
 | Variable    | Type | Brief description                   |
 |-------------|------|-------------------------------------|
-| `address`   |      | street address of laquinta location |
-| `city`      |      | city of laquinta location           |
-| `state`     |      | state of laquinta location          |
-| `zip`       |      | zip code of laquinta location       |
-| `longitude` |      | east-west position on Earth         |
-| `latitude`  |      | north-south position on Earth       |
+| `address`   |chr| street address of laquinta location |
+| `city`      |chr| city of laquinta location           |
+| `state`     |chr| state of laquinta location          |
+| `zip`       |chr| zip code of laquinta location       |
+| `longitude` |num| east-west position on Earth         |
+| `latitude`  |num| north-south position on Earth       |
 
 #### States data
 
 | Variable       | Type | Brief description             |
 |----------------|------|-------------------------------|
-| `name`         |      | state name                    |
-| `abbreviation` |      | state abbreviation            |
-| `area`         |      | area in thousand square miles |
+| `name`         |chr| state name                    |
+| `abbreviation` |chr| state abbreviation            |
+| `area`         |num| area in thousand square miles |
 
 ![](README-img/noun_pause.png) **Planned Pause Point**: If you have any questions, contact your instructor. Otherwise feel free to continue on.
 
@@ -95,14 +111,14 @@ Look at the websites that the data come from (linked above).
 Are there any La Quinta’s locations outside of the US?
 What about Denny’s?
 
-**Response**:
+**Response**: It looks like all Dennys locations are within the United States, but there are La Quinta locations in other countries, including canada, mexico, New Zealand, etc.
 
 
 If we wanted to do this using the datasets, would we need to ?
 Don’t worry about implementing this yet, you only need to brainstorm some ideas.
 Include at least one idea as your answer, but you are welcome to write down a few options too.
 
-**Response**:
+**Response**: I think that it would be easy to filter out foreign locations in the laquinta tibble with a pipe operator and a filter function where country == US, but there isn't a variable for country so I suppose it'd have to be joined to another dataset first.
 
 
 ### Preparing to Join
@@ -114,16 +130,26 @@ To do so, *filter* the Denny’s locations for observations where state is *not 
 Do not assign this to anything; we only want to see if we need to be aware of non-US cases.
 If there are any non-US locations, specify where these are.
 
+```{r checking dennys for non-US entries %in%}
 
+dennys %>%
+  filter(!state %in% states$abbreviation)
 
+```
 
-**Response**:
+**Response**: There are no locations outside the US in the Denny's dataset.
 
 
 Now do this again, but using `anti_join`.
 To do so, take the Denny's locations and anti-join this with the states dataset.
 Remember to specify your `by` columns.
 
+```{r checking dennys for non-US entries with antijoin}
+
+dennys %>% 
+  anti_join(states, by = c("state" = "abbreviation"))
+
+```
 
 
 #### Brief Aside
@@ -167,6 +193,15 @@ dennys %>%
 
 Determine if La Quinta has any locations that are outside of the US.
 
+```{r}
+
+laquinta %>%
+  anti_join(states, by = c("state" = "abbreviation")) %>%
+  count(state, sort=TRUE) %>%
+  summarize(sum(n))
+
+
+```
 
 
 
@@ -176,6 +211,12 @@ For the rest of this activity, we will work with the data from the United States
 All Denny's locations in our file are in the US so we do not need to worry about updating this object, but you do need to do some work on the `laquinta` data.
 Create a new object called `laquinta_us` that only contains the locations inside the US.
 
+```{r filtering laquinta for US locations only}
+
+laquinta_us <- laquinta %>%
+  semi_join(states, by = c("state" = "abbreviation"))
+
+```
 
 
 ### Fewest locations
@@ -184,6 +225,12 @@ Let's test some of our data summary skills.
 
 Which US state(s) has/ve the fewest Denny's location?
 
+```{r sorting dennys by states w/ fewest dennys}
+
+dennys %>%
+  group_by(state)
+
+```
 
 
 
